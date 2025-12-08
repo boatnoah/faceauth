@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"errors"
+
+	"github.com/boatnoah/faceauth/internal/store"
 	"github.com/go-chi/chi/v5"
 
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,6 +15,7 @@ import (
 
 type app struct {
 	config config
+	store  store.Storage
 	logger *zap.SugaredLogger
 }
 

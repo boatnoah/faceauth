@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/boatnoah/faceauth/internal/store"
 	"go.uber.org/zap"
 )
 
@@ -15,9 +16,10 @@ func main() {
 	logger := zap.Must(zap.NewProduction()).Sugar()
 	defer logger.Sync()
 
-	a := app{config: cfg, logger: logger}
+	store := store.NewStorage(nil)
+
+	a := app{config: cfg, store: store, logger: logger}
 
 	mux := a.mount()
 	logger.Fatal(a.run(mux))
-
 }

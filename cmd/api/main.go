@@ -1,25 +1,23 @@
 package main
 
 import (
+	"log"
+
 	"github.com/boatnoah/faceauth/internal/store"
-	"go.uber.org/zap"
 )
 
 func main() {
 	cfg := config{
 		addr: ":8080",
 		db: dbConfig{
-			addr: "testing.string.",
+			addr: "",
 		},
 	}
 
-	logger := zap.Must(zap.NewProduction()).Sugar()
-	defer logger.Sync()
-
 	store := store.NewStorage(nil)
 
-	a := app{config: cfg, store: store, logger: logger}
+	a := app{config: cfg, store: store}
 
 	mux := a.mount()
-	logger.Fatal(a.run(mux))
+	log.Fatal(a.run(mux))
 }

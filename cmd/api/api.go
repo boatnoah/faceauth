@@ -1,22 +1,23 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"errors"
 
+	"github.com/boatnoah/faceauth/internal/auth"
 	"github.com/boatnoah/faceauth/internal/store"
 	"github.com/go-chi/chi/v5"
 
 	"github.com/go-chi/chi/v5/middleware"
-	"go.uber.org/zap"
 )
 
 type app struct {
-	config config
-	store  store.Storage
-	logger *zap.SugaredLogger
+	config        config
+	store         store.Storage
+	authenticator auth.Authenticator
 }
 
 type config struct {
@@ -50,13 +51,14 @@ func (a *app) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	a.logger.Infow("Server has started", "addr", a.config.addr)
+	log.Printf("Server has started addr=%v", a.config.addr)
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
-	a.logger.Infow("Server has stopped", "addr", a.config.addr)
+
+	log.Printf("Server has stopped addr=%v", a.config.addr)
 
 	return nil
 

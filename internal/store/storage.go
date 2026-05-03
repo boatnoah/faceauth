@@ -6,9 +6,6 @@ import (
 )
 
 type Storage struct {
-	Auth interface {
-		Create(context.Context) error
-	}
 	Token interface {
 		Create(context.Context) error
 	}
@@ -19,7 +16,6 @@ type Storage struct {
 
 func NewStorage(db *sql.DB) Storage {
 	return Storage{
-		Auth:    &AuthStorage{db},
 		Token:   &TokenStorage{db},
 		Profile: &ProfileStorage{db},
 	}

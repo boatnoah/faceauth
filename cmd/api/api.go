@@ -26,7 +26,10 @@ type config struct {
 }
 
 type dbConfig struct {
-	addr string
+	addr         string
+	maxOpenConns int
+	maxIdleConns int
+	maxIdleTime  string
 }
 
 func (a *app) mount() http.Handler {
@@ -38,6 +41,8 @@ func (a *app) mount() http.Handler {
 
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", a.healthCheckHandler)
+		r.Post("/signup", a.signUpHandler)
+		r.Post("/login", a.logInHandler)
 	})
 	return r
 }

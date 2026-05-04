@@ -3,20 +3,25 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
+)
+
+var (
+	ErrNotFound = errors.New("resource not found")
 )
 
 type Storage struct {
-	Token interface {
-		Create(context.Context) error
+	Session interface {
+		Create(context.Context) (string, error)
 	}
 	Profile interface {
-		Create(context.Context) error
+		Create(context.Context, string) error
 	}
 }
 
 func NewStorage(db *sql.DB) Storage {
 	return Storage{
-		Token:   &TokenStorage{db},
+		Session: &SessionStorage{db},
 		Profile: &ProfileStorage{db},
 	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/boatnoah/faceauth/internal/auth"
 	"github.com/boatnoah/faceauth/internal/db"
 	"github.com/boatnoah/faceauth/internal/env"
 	"github.com/boatnoah/faceauth/internal/store"
@@ -32,10 +33,12 @@ func main() {
 	}
 
 	store := store.NewStorage(db)
+	auth := auth.New(store)
 
 	a := app{
-		config: cfg,
-		store:  store,
+		config:        cfg,
+		store:         store,
+		authenticator: auth,
 	}
 
 	mux := a.mount()

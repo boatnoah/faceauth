@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -29,7 +28,7 @@ func (a *app) AuthTokenMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := parts[1]
-		sessionToken, err := app.authenticator.ValidateToken(token)
+		err := a.authenticator.ValidateToken(r.Context(), token)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("%v", err), http.StatusUnauthorized)
 			return
@@ -37,30 +36,5 @@ func (a *app) AuthTokenMiddleware(next http.Handler) http.Handler {
 
 		ctx := r.Context()
 
-		user, err := app.getUser(ctx, userID)
-		if err != nil {
-			http.Error(w, "Unable to retrieve user", http.StatusBadRequest)
-			return
-		}
-
-		ctx = context.WithValue(ctx, userCtx, user)
-		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func (a *app) getUser(ctx context.Context, userID int64) (*storage.User, error) {
-
-	// todo
-
-	user, err := app.store.UserStorage.GetByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
-}
-
-func (a *app) getUserFromContext(r *http.Request) *storage.User {
-	user, _ := r.Context().Value(userCtx).(*storage.User)
-	return user
 }
